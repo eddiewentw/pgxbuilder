@@ -6,7 +6,8 @@ type Query struct {
 	// stmt indicates which kind of statement this query is.
 	stmt statement
 
-	table string
+	table      string
+	conditions []whereCondition
 
 	// columns contains selected columns in select statement.
 	columns []string
@@ -35,9 +36,13 @@ func (q Query) String() string {
 
 		b.WriteString(" FROM ")
 		b.WriteString(q.table)
+
+		b.WriteString(q.toWhere())
 	case stmtDelete:
 		b.WriteString("DELETE FROM ")
 		b.WriteString(q.table)
+
+		b.WriteString(q.toWhere())
 	}
 
 	return b.String()
