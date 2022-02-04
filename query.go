@@ -1,7 +1,5 @@
 package pgxbuilder
 
-import "strings"
-
 type Query struct {
 	// stmt indicates which kind of statement this query is.
 	stmt statement
@@ -22,28 +20,12 @@ const (
 
 // String returns an SQL string.
 func (q Query) String() string {
-	var b strings.Builder
-
 	switch q.stmt {
 	case stmtSelect:
-		b.WriteString("SELECT ")
-
-		if len(q.columns) == 0 {
-			b.WriteString("*")
-		} else {
-			b.WriteString(strings.Join(q.columns, ", "))
-		}
-
-		b.WriteString(" FROM ")
-		b.WriteString(q.table)
-
-		b.WriteString(q.toWhere())
+		return q.toSelect()
 	case stmtDelete:
-		b.WriteString("DELETE FROM ")
-		b.WriteString(q.table)
-
-		b.WriteString(q.toWhere())
+		return q.toDelete()
 	}
 
-	return b.String()
+	return ""
 }
