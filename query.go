@@ -6,8 +6,11 @@ type Query struct {
 
 	table      string
 	conditions []whereCondition
+	parameters []interface{}
 
-	// columns contains selected columns in select statement.
+	// columns has different purposes in different statements. It
+	// contains selected columns in select statement, set expressions
+	// in update statement.
 	columns []string
 }
 
@@ -16,6 +19,7 @@ type statement int
 const (
 	stmtSelect statement = iota + 1
 	stmtDelete
+	stmtUpdate
 )
 
 // String returns an SQL string.
@@ -25,7 +29,14 @@ func (q Query) String() string {
 		return q.toSelect()
 	case stmtDelete:
 		return q.toDelete()
+	case stmtUpdate:
+		return q.toUpdate()
 	}
 
 	return ""
+}
+
+// Parameters returns all parameters in this query.
+func (q Query) Parameters() []interface{} {
+	return q.parameters
 }
