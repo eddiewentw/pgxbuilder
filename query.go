@@ -12,6 +12,11 @@ type Query struct {
 	// contains selected columns in select statement, set expressions
 	// in update statement.
 	columns []string
+
+	// valueSize counts how many columns have an explicit value to insert.
+	// This helps insert statement to decide how many records are going
+	// to insert.
+	valueSize int
 }
 
 type statement int
@@ -20,6 +25,7 @@ const (
 	stmtSelect statement = iota + 1
 	stmtDelete
 	stmtUpdate
+	stmtInsert
 )
 
 // String returns an SQL string.
@@ -31,6 +37,8 @@ func (q Query) String() string {
 		return q.toDelete()
 	case stmtUpdate:
 		return q.toUpdate()
+	case stmtInsert:
+		return q.toInsert()
 	}
 
 	return ""
