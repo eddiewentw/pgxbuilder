@@ -57,10 +57,10 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("with a condition", func(t *testing.T) {
 		q := Update("posts").
-			Set("content = $1", "Hello, world.").
-			Where("id = 299")
+			Set("content = $1", "Hello, world.")
+		q = q.Where("id = $2", q.Param(299))
 
-		assert.Equal(t, "UPDATE posts SET content = $1 WHERE (id = 299)", q.String())
-		assert.Equal(t, []interface{}{"Hello, world."}, q.Parameters())
+		assert.Equal(t, "UPDATE posts SET content = $1 WHERE (id = $2)", q.String())
+		assert.Equal(t, []interface{}{"Hello, world.", 299}, q.Parameters())
 	})
 }

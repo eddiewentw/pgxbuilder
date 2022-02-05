@@ -19,18 +19,25 @@ func (o operator) String() string {
 	return ""
 }
 
-func (q *Query) And(condition string, conditions ...whereCondition) whereCondition {
-	return whereCondition{
-		operator:  operatorAnd,
+func (q *Query) newWhereConditionOption(op operator, condition string, options ...whereOption) whereCondition {
+	c := whereCondition{
+		operator:  op,
 		condition: condition,
-		extra:     conditions,
 	}
+
+	for _, o := range options {
+		o.apply(q, &c)
+	}
+
+	return c
 }
 
-func (q *Query) Or(condition string, conditions ...whereCondition) whereCondition {
-	return whereCondition{
-		operator:  operatorOr,
-		condition: condition,
-		extra:     conditions,
-	}
+// And concatenates where conditions with an AND operator.
+func (q *Query) And(condition string, options ...whereOption) whereCondition {
+	return q.newWhereConditionOption(operatorAnd, condition, options...)
+}
+
+// Or concatenates where conditions with an OR operator.
+func (q *Query) Or(condition string, options ...whereOption) whereCondition {
+	return q.newWhereConditionOption(operatorOr, condition, options...)
 }

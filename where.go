@@ -25,14 +25,27 @@ func (c whereCondition) String() string {
 	return b.String()
 }
 
+func (c whereCondition) apply(_ *Query, cond *whereCondition) {
+	cond.extra = append(cond.extra, c)
+}
+
+type whereOption interface {
+	// apply adds this option to the main condition.
+	apply(*Query, *whereCondition)
+}
+
 // Where adds one or more where conditions. Use And and Or operators to combine
 // multiple conditions.
-func (q *Query) Where(condition string, conditions ...whereCondition) *Query {
-	q.conditions = append(q.conditions, whereCondition{
-		// operator:  operatorAnd,
+func (q *Query) Where(condition string, options ...whereOption) *Query {
+	c := whereCondition{
 		condition: condition,
-		extra:     conditions,
-	})
+	}
+
+	for _, o := range options {
+		o.apply(q, &c)
+	}
+
+	q.conditions = append(q.conditions, c)
 
 	return q
 }

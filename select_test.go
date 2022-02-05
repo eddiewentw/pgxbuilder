@@ -38,9 +38,10 @@ func TestQuery_Select(t *testing.T) {
 	})
 
 	t.Run("with a condition", func(t *testing.T) {
-		q := From("posts").
-			Where("id = 299")
+		q := From("posts")
+		q = q.Where("id = $1", q.Param(299))
 
-		assert.Equal(t, "SELECT * FROM posts WHERE (id = 299)", q.String())
+		assert.Equal(t, "SELECT * FROM posts WHERE (id = $1)", q.String())
+		assert.Equal(t, []interface{}{299}, q.Parameters())
 	})
 }

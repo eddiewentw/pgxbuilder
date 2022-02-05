@@ -40,3 +40,14 @@ func (q Query) String() string {
 func (q Query) Parameters() []interface{} {
 	return q.parameters
 }
+
+type parameterOption struct{}
+
+func (o parameterOption) apply(_ *Query, _ *whereCondition) {}
+
+// Param registers one or more parameters to this query. You can use Parameters
+// to get all of them.
+func (q *Query) Param(v ...interface{}) parameterOption {
+	q.parameters = append(q.parameters, v...)
+	return parameterOption{}
+}
