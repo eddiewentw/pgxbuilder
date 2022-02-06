@@ -12,6 +12,8 @@ type Query struct {
 	// contains selected columns in select statement, set expressions
 	// in update statement.
 	columns []string
+	// returning contains columns to return after manipulation.
+	returning []string
 
 	// valueSize counts how many columns have an explicit value to insert.
 	// This helps insert statement to decide how many records are going
@@ -58,4 +60,11 @@ func (o parameterOption) apply(_ *Query, _ *whereCondition) {}
 func (q *Query) Param(v ...interface{}) parameterOption {
 	q.parameters = append(q.parameters, v...)
 	return parameterOption{}
+}
+
+// Returning obtains data from modified rows.
+func (q *Query) Returning(columns ...string) *Query {
+	q.returning = append(q.returning, columns...)
+
+	return q
 }

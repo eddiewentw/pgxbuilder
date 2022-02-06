@@ -36,5 +36,10 @@ func (q Query) toUpdate() string {
 
 	b.WriteString(q.toWhere())
 
+	if len(q.returning) > 0 {
+		b.WriteString(" RETURNING ")
+		b.WriteString(strings.Join(q.returning, ", "))
+	}
+
 	return b.String()
 }

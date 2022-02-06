@@ -63,4 +63,12 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, "UPDATE posts SET content = $1 WHERE (id = $2)", q.String())
 		assert.Equal(t, []interface{}{"Hello, world.", 299}, q.Parameters())
 	})
+
+	t.Run("return columns", func(t *testing.T) {
+		q := Update("posts").
+			Set("content = $1", "Hello, world.").
+			Returning("created_at", "updated_at")
+
+		assert.Equal(t, "UPDATE posts SET content = $1 RETURNING created_at, updated_at", q.String())
+	})
 }

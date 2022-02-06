@@ -39,6 +39,14 @@ func TestInsert(t *testing.T) {
 		})
 	})
 
+	t.Run("return columns", func(t *testing.T) {
+		q := Insert("posts", []string{}).
+			Values(1, "foo", "bar").
+			Returning("created_at", "updated_at")
+
+		assert.Equal(t, "INSERT INTO posts VALUES ($1, $2, $3) RETURNING created_at, updated_at", q.String())
+	})
+
 	t.Run("with Param() wrapper", func(t *testing.T) {
 		q := Insert("posts", []string{"title", "content"})
 		q = q.Values(q.Param("foo"), q.Param("Fly without history, and we won’t teleport a starship.")).

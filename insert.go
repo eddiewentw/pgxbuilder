@@ -64,5 +64,10 @@ func (q Query) toInsert() string {
 		}
 	}
 
+	if len(q.returning) > 0 {
+		b.WriteString(" RETURNING ")
+		b.WriteString(strings.Join(q.returning, ", "))
+	}
+
 	return b.String()
 }
