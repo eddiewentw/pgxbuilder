@@ -7,6 +7,7 @@ type Query struct {
 	table      string
 	conditions []whereCondition
 	parameters []interface{}
+	limit      uint64
 
 	// columns has different purposes in different statements. It
 	// contains selected columns in select statement, set expressions
@@ -65,6 +66,12 @@ func (q *Query) Param(v ...interface{}) parameterOption {
 // Returning obtains data from modified rows.
 func (q *Query) Returning(columns ...string) *Query {
 	q.returning = append(q.returning, columns...)
+
+	return q
+}
+
+func (q *Query) Limit(v uint64) *Query {
+	q.limit = v
 
 	return q
 }
