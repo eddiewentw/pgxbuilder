@@ -40,6 +40,10 @@ func (q Query) toSelect() string {
 		b.WriteString(" LIMIT ")
 		b.WriteString(strconv.FormatUint(q.limit, 10))
 	}
+	if q.offset > 0 {
+		b.WriteString(" OFFSET ")
+		b.WriteString(strconv.FormatUint(q.offset, 10))
+	}
 
 	return b.String()
 }

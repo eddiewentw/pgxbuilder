@@ -8,6 +8,7 @@ type Query struct {
 	conditions []whereCondition
 	parameters []interface{}
 	limit      uint64
+	offset     uint64
 
 	// columns has different purposes in different statements. It
 	// contains selected columns in select statement, set expressions
@@ -72,6 +73,12 @@ func (q *Query) Returning(columns ...string) *Query {
 
 func (q *Query) Limit(v uint64) *Query {
 	q.limit = v
+
+	return q
+}
+
+func (q *Query) Offset(v uint64) *Query {
+	q.offset = v
 
 	return q
 }
