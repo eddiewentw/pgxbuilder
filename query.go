@@ -70,15 +70,3 @@ func (q *Query) Returning(columns ...string) *Query {
 
 	return q
 }
-
-func (q *Query) Limit(v uint64) *Query {
-	q.limit = v
-
-	return q
-}
-
-func (q *Query) Offset(v uint64) *Query {
-	q.offset = v
-
-	return q
-}
