@@ -20,6 +20,20 @@ func (q *Query) Select(columns ...string) *Query {
 	return q
 }
 
+// Limit specifies the maximum number of rows to return.
+func (q *Query) Limit(count uint64) *Query {
+	q.limit = count
+
+	return q
+}
+
+// Offset specifies the number of rows to skip before starting to return rows.
+func (q *Query) Offset(start uint64) *Query {
+	q.offset = start
+
+	return q
+}
+
 func (q Query) toSelect() string {
 	var b strings.Builder
 
@@ -36,6 +50,10 @@ func (q Query) toSelect() string {
 
 	b.WriteString(q.toWhere())
 
+	if len(q.orderBy) > 0 {
+		b.WriteString(" ORDER BY ")
+		b.WriteString(strings.Join(q.orderBy, ", "))
+	}
 	if q.limit > 0 {
 		b.WriteString(" LIMIT ")
 		b.WriteString(strconv.FormatUint(q.limit, 10))

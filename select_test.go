@@ -13,37 +13,12 @@ func TestFrom(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts", q.String())
 	})
 
-	t.Run("with limit clause", func(t *testing.T) {
-		q := From("posts").
-			Limit(30)
-
-		assert.Equal(t, "SELECT * FROM posts LIMIT 30", q.String())
-	})
-
-	t.Run("with offset clause", func(t *testing.T) {
-		q := From("posts").
-			Offset(10)
-
-		assert.Equal(t, "SELECT * FROM posts OFFSET 10", q.String())
-	})
-
 	t.Run("with a condition", func(t *testing.T) {
-		t.Run("success", func(t *testing.T) {
-			q := From("posts")
-			q = q.Where("id = $1", q.Param(299))
+		q := From("posts")
+		q = q.Where("id = $1", q.Param(299))
 
-			assert.Equal(t, "SELECT * FROM posts WHERE (id = $1)", q.String())
-			assert.Equal(t, []interface{}{299}, q.Parameters())
-		})
-
-		t.Run("with limit and offset clauses", func(t *testing.T) {
-			q := From("posts")
-			q = q.Where("id = $1", q.Param(299)).
-				Limit(30).
-				Offset(30)
-
-			assert.Equal(t, "SELECT * FROM posts WHERE (id = $1) LIMIT 30 OFFSET 30", q.String())
-		})
+		assert.Equal(t, "SELECT * FROM posts WHERE (id = $1)", q.String())
+		assert.Equal(t, []interface{}{299}, q.Parameters())
 	})
 }
 
@@ -70,5 +45,63 @@ func TestQuery_Select(t *testing.T) {
 
 			assert.Equal(t, "SELECT title, content, author FROM posts", q.String())
 		})
+	})
+}
+
+func TestQuery_Limit(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		q := From("posts").
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts LIMIT 30", q.String())
+	})
+
+	t.Run("with conditions", func(t *testing.T) {
+		q := From("posts")
+		q = q.Where("member_id = $1", q.Param(55)).
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) LIMIT 30", q.String())
+	})
+
+	t.Run("with order by clause", func(t *testing.T) {
+		q := From("posts").
+			OrderBy("created_at").
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts ORDER BY created_at LIMIT 30", q.String())
+	})
+}
+
+func TestQuery_Offset(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		q := From("posts").
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts OFFSET 10", q.String())
+	})
+
+	t.Run("with conditions", func(t *testing.T) {
+		q := From("posts")
+		q = q.Where("member_id = $1", q.Param(55)).
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) OFFSET 10", q.String())
+	})
+
+	t.Run("with order by clause", func(t *testing.T) {
+		q := From("posts").
+			OrderBy("created_at").
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts ORDER BY created_at OFFSET 10", q.String())
+	})
+
+	t.Run("with limit clause", func(t *testing.T) {
+		q := From("posts").
+			Limit(30).
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts LIMIT 30 OFFSET 10", q.String())
 	})
 }
