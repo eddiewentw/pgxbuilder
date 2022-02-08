@@ -20,14 +20,16 @@ func (q *Query) Select(columns ...string) *Query {
 	return q
 }
 
-func (q *Query) Limit(v uint64) *Query {
-	q.limit = v
+// Limit specifies the maximum number of rows to return.
+func (q *Query) Limit(count uint64) *Query {
+	q.limit = count
 
 	return q
 }
 
-func (q *Query) Offset(v uint64) *Query {
-	q.offset = v
+// Offset specifies the number of rows to skip before starting to return rows.
+func (q *Query) Offset(start uint64) *Query {
+	q.offset = start
 
 	return q
 }
