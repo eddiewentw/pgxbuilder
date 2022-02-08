@@ -64,6 +64,14 @@ func TestQuery_Limit(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) LIMIT 30", q.String())
 	})
 
+	t.Run("with group by clause", func(t *testing.T) {
+		q := From("posts").
+			GroupBy("member_id").
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts GROUP BY member_id LIMIT 30", q.String())
+	})
+
 	t.Run("with order by clause", func(t *testing.T) {
 		q := From("posts").
 			OrderBy("created_at").
@@ -87,6 +95,14 @@ func TestQuery_Offset(t *testing.T) {
 			Offset(10)
 
 		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) OFFSET 10", q.String())
+	})
+
+	t.Run("with group by clause", func(t *testing.T) {
+		q := From("posts").
+			GroupBy("member_id").
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts GROUP BY member_id OFFSET 10", q.String())
 	})
 
 	t.Run("with order by clause", func(t *testing.T) {
