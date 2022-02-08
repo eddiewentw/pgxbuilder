@@ -7,9 +7,44 @@ import (
 )
 
 func TestFrom(t *testing.T) {
-	q := From("posts")
+	t.Run("success", func(t *testing.T) {
+		q := From("posts")
 
-	assert.Equal(t, "SELECT * FROM posts", q.String())
+		assert.Equal(t, "SELECT * FROM posts", q.String())
+	})
+
+	t.Run("with limit clause", func(t *testing.T) {
+		q := From("posts").
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts LIMIT 30", q.String())
+	})
+
+	t.Run("with offset clause", func(t *testing.T) {
+		q := From("posts").
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts OFFSET 10", q.String())
+	})
+
+	t.Run("with a condition", func(t *testing.T) {
+		t.Run("success", func(t *testing.T) {
+			q := From("posts")
+			q = q.Where("id = $1", q.Param(299))
+
+			assert.Equal(t, "SELECT * FROM posts WHERE (id = $1)", q.String())
+			assert.Equal(t, []interface{}{299}, q.Parameters())
+		})
+
+		t.Run("with limit and offset clauses", func(t *testing.T) {
+			q := From("posts")
+			q = q.Where("id = $1", q.Param(299)).
+				Limit(30).
+				Offset(30)
+
+			assert.Equal(t, "SELECT * FROM posts WHERE (id = $1) LIMIT 30 OFFSET 30", q.String())
+		})
+	})
 }
 
 func TestQuery_Select(t *testing.T) {
@@ -35,13 +70,5 @@ func TestQuery_Select(t *testing.T) {
 
 			assert.Equal(t, "SELECT title, content, author FROM posts", q.String())
 		})
-	})
-
-	t.Run("with a condition", func(t *testing.T) {
-		q := From("posts")
-		q = q.Where("id = $1", q.Param(299))
-
-		assert.Equal(t, "SELECT * FROM posts WHERE (id = $1)", q.String())
-		assert.Equal(t, []interface{}{299}, q.Parameters())
 	})
 }

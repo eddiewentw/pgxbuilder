@@ -1,6 +1,9 @@
 package pgxbuilder
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 // From starts a select statement.
 func From(table string) *Query {
@@ -32,6 +35,15 @@ func (q Query) toSelect() string {
 	b.WriteString(q.table)
 
 	b.WriteString(q.toWhere())
+
+	if q.limit > 0 {
+		b.WriteString(" LIMIT ")
+		b.WriteString(strconv.FormatUint(q.limit, 10))
+	}
+	if q.offset > 0 {
+		b.WriteString(" OFFSET ")
+		b.WriteString(strconv.FormatUint(q.offset, 10))
+	}
 
 	return b.String()
 }
