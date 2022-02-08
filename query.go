@@ -9,6 +9,7 @@ type Query struct {
 	parameters []interface{}
 	limit      uint64
 	offset     uint64
+	orderBy    []string
 
 	// columns has different purposes in different statements. It
 	// contains selected columns in select statement, set expressions

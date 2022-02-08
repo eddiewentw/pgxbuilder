@@ -50,6 +50,10 @@ func (q Query) toSelect() string {
 
 	b.WriteString(q.toWhere())
 
+	if len(q.orderBy) > 0 {
+		b.WriteString(" ORDER BY ")
+		b.WriteString(strings.Join(q.orderBy, ", "))
+	}
 	if q.limit > 0 {
 		b.WriteString(" LIMIT ")
 		b.WriteString(strconv.FormatUint(q.limit, 10))
