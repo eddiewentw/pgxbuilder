@@ -34,9 +34,9 @@ func (q Query) toInsert() string {
 	b.WriteString(q.table)
 
 	if len(q.columns) > 0 {
-		b.WriteRune('(')
+		b.WriteString("(")
 		b.WriteString(strings.Join(q.columns, ", "))
-		b.WriteRune(')')
+		b.WriteString(")")
 	}
 
 	b.WriteString(" VALUES ")
@@ -45,7 +45,7 @@ func (q Query) toInsert() string {
 		count := len(q.parameters) / q.valueSize
 
 		for i := 0; i < count; i++ {
-			b.WriteRune('(')
+			b.WriteString("(")
 
 			for j := 1; j <= q.valueSize; j++ {
 				b.WriteString("$")
@@ -56,7 +56,7 @@ func (q Query) toInsert() string {
 				}
 			}
 
-			b.WriteRune(')')
+			b.WriteString(")")
 
 			if i != count-1 {
 				b.WriteString(", ")
