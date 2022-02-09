@@ -23,7 +23,16 @@ func (q *Query) Select(columns ...string) *Query {
 // Distinct excludes all duplicate rows from the result set. One row will be
 // kept from each group of duplicates.
 func (q *Query) Distinct() *Query {
-	q.distinct = true
+	q.distinct.enabled = true
+
+	return q
+}
+
+// DistinctOn keeps only the first row of each set of rows where the given
+// expressions evaluate to equal.
+func (q *Query) DistinctOn(columns ...string) *Query {
+	q.distinct.enabled = true
+	q.distinct.columns = columns
 
 	return q
 }
@@ -46,10 +55,7 @@ func (q Query) toSelect() string {
 	var b strings.Builder
 
 	b.WriteString("SELECT ")
-
-	if q.distinct {
-		b.WriteString("DISTINCT ")
-	}
+	b.WriteString(q.distinct.String())
 
 	if len(q.columns) == 0 {
 		b.WriteString("*")
