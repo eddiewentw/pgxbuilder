@@ -7,27 +7,25 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	t.Run("update all records in the table", func(t *testing.T) {
-		t.Run("success", func(t *testing.T) {
-			q := Update("posts").
-				Set("content = 'Hello, world.'")
+	t.Run("success", func(t *testing.T) {
+		q := Update("posts").
+			Set("content = 'Hello, world.'")
 
-			assert.Equal(t, "UPDATE posts SET content = 'Hello, world.'", q.String())
-			assert.Empty(t, q.Parameters())
-		})
+		assert.Equal(t, "UPDATE posts SET content = 'Hello, world.'", q.String())
+		assert.Empty(t, q.Parameters())
+	})
 
-		t.Run("with many Set() calls", func(t *testing.T) {
-			q := Update("posts").
-				Set("title = 'foo'").
-				Set("content = 'Hello, world.'")
+	t.Run("update multiple columns", func(t *testing.T) {
+		q := Update("posts").
+			Set("title = 'foo'").
+			Set("content = 'Hello, world.'")
 
-			assert.Equal(t, "UPDATE posts SET title = 'foo', content = 'Hello, world.'", q.String())
-			assert.Empty(t, q.Parameters())
-		})
+		assert.Equal(t, "UPDATE posts SET title = 'foo', content = 'Hello, world.'", q.String())
+		assert.Empty(t, q.Parameters())
 	})
 
 	t.Run("with parameters", func(t *testing.T) {
-		t.Run("with one parameter", func(t *testing.T) {
+		t.Run("success", func(t *testing.T) {
 			q := Update("posts").
 				Set("content = $1", "Hello, world.")
 
@@ -35,8 +33,8 @@ func TestUpdate(t *testing.T) {
 			assert.Equal(t, []interface{}{"Hello, world."}, q.Parameters())
 		})
 
-		t.Run("with many parameters", func(t *testing.T) {
-			t.Run("success", func(t *testing.T) {
+		t.Run("multiple parameters", func(t *testing.T) {
+			t.Run("in one call", func(t *testing.T) {
 				q := Update("posts").
 					Set("title = $1, content = $2", "foo", "Hello, world.")
 
@@ -44,7 +42,7 @@ func TestUpdate(t *testing.T) {
 				assert.Equal(t, []interface{}{"foo", "Hello, world."}, q.Parameters())
 			})
 
-			t.Run("with many Set() calls", func(t *testing.T) {
+			t.Run("in multiple calls", func(t *testing.T) {
 				q := Update("posts").
 					Set("title = $1", "foo").
 					Set("content = $2", "Hello, world.")
@@ -55,7 +53,7 @@ func TestUpdate(t *testing.T) {
 		})
 	})
 
-	t.Run("with a condition", func(t *testing.T) {
+	t.Run("with where clause", func(t *testing.T) {
 		q := Update("posts").
 			Set("content = $1", "Hello, world.")
 		q = q.Where("id = $2", q.Param(299))

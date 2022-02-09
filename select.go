@@ -50,6 +50,10 @@ func (q Query) toSelect() string {
 
 	b.WriteString(q.toWhere())
 
+	if len(q.groupBy) > 0 {
+		b.WriteString(" GROUP BY ")
+		b.WriteString(strings.Join(q.groupBy, ", "))
+	}
 	if len(q.orderBy) > 0 {
 		b.WriteString(" ORDER BY ")
 		b.WriteString(strings.Join(q.orderBy, ", "))

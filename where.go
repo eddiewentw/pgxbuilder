@@ -12,7 +12,7 @@ func (c whereCondition) String() string {
 	var b strings.Builder
 
 	b.WriteString(c.operator.String())
-	b.WriteRune('(')
+	b.WriteString("(")
 
 	b.WriteString(c.condition)
 
@@ -20,7 +20,7 @@ func (c whereCondition) String() string {
 		b.WriteString(cond.String())
 	}
 
-	b.WriteRune(')')
+	b.WriteString(")")
 
 	return b.String()
 }

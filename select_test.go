@@ -30,15 +30,15 @@ func TestQuery_Select(t *testing.T) {
 		assert.Equal(t, "SELECT title FROM posts", q.String())
 	})
 
-	t.Run("select many columns", func(t *testing.T) {
-		t.Run("success", func(t *testing.T) {
+	t.Run("select multiple columns", func(t *testing.T) {
+		t.Run("in one call", func(t *testing.T) {
 			q := From("posts").
 				Select("title", "content", "author")
 
 			assert.Equal(t, "SELECT title, content, author FROM posts", q.String())
 		})
 
-		t.Run("with many Select() calls", func(t *testing.T) {
+		t.Run("in multiple calls", func(t *testing.T) {
 			q := From("posts").
 				Select("title").
 				Select("content", "author")
@@ -56,12 +56,20 @@ func TestQuery_Limit(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts LIMIT 30", q.String())
 	})
 
-	t.Run("with conditions", func(t *testing.T) {
+	t.Run("with where clause", func(t *testing.T) {
 		q := From("posts")
 		q = q.Where("member_id = $1", q.Param(55)).
 			Limit(30)
 
 		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) LIMIT 30", q.String())
+	})
+
+	t.Run("with group by clause", func(t *testing.T) {
+		q := From("posts").
+			GroupBy("member_id").
+			Limit(30)
+
+		assert.Equal(t, "SELECT * FROM posts GROUP BY member_id LIMIT 30", q.String())
 	})
 
 	t.Run("with order by clause", func(t *testing.T) {
@@ -81,12 +89,20 @@ func TestQuery_Offset(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts OFFSET 10", q.String())
 	})
 
-	t.Run("with conditions", func(t *testing.T) {
+	t.Run("with where clause", func(t *testing.T) {
 		q := From("posts")
 		q = q.Where("member_id = $1", q.Param(55)).
 			Offset(10)
 
 		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) OFFSET 10", q.String())
+	})
+
+	t.Run("with group by clause", func(t *testing.T) {
+		q := From("posts").
+			GroupBy("member_id").
+			Offset(10)
+
+		assert.Equal(t, "SELECT * FROM posts GROUP BY member_id OFFSET 10", q.String())
 	})
 
 	t.Run("with order by clause", func(t *testing.T) {
