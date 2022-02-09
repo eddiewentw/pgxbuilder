@@ -16,26 +16,24 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("insert specific columns", func(t *testing.T) {
-		t.Run("with scalar types", func(t *testing.T) {
-			t.Run("success", func(t *testing.T) {
-				q := Insert("posts", []string{"title", "content"}).
-					Values("foo", "bar")
+		t.Run("success", func(t *testing.T) {
+			q := Insert("posts", []string{"title", "content"}).
+				Values("foo", "bar")
 
-				assert.Equal(t, "INSERT INTO posts(title, content) VALUES ($1, $2)", q.String())
-				assert.Equal(t, []interface{}{"foo", "bar"}, q.Parameters())
-			})
+			assert.Equal(t, "INSERT INTO posts(title, content) VALUES ($1, $2)", q.String())
+			assert.Equal(t, []interface{}{"foo", "bar"}, q.Parameters())
+		})
 
-			t.Run("insert many records", func(t *testing.T) {
-				q := Insert("posts", []string{"title", "content"}).
-					Values("foo", "Fly without history, and we won’t teleport a starship.").
-					Values("bar", "The planet is bravely crazy.")
+		t.Run("insert multiple records", func(t *testing.T) {
+			q := Insert("posts", []string{"title", "content"}).
+				Values("foo", "Fly without history, and we won’t teleport a starship.").
+				Values("bar", "The planet is bravely crazy.")
 
-				assert.Equal(t, "INSERT INTO posts(title, content) VALUES ($1, $2), ($3, $4)", q.String())
-				assert.Equal(t, []interface{}{
-					"foo", "Fly without history, and we won’t teleport a starship.",
-					"bar", "The planet is bravely crazy.",
-				}, q.Parameters())
-			})
+			assert.Equal(t, "INSERT INTO posts(title, content) VALUES ($1, $2), ($3, $4)", q.String())
+			assert.Equal(t, []interface{}{
+				"foo", "Fly without history, and we won’t teleport a starship.",
+				"bar", "The planet is bravely crazy.",
+			}, q.Parameters())
 		})
 	})
 

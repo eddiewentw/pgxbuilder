@@ -22,7 +22,7 @@ func TestQuery_OrderBy(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts ORDER BY created_at DESC, id", q.String())
 	})
 
-	t.Run("with conditions", func(t *testing.T) {
+	t.Run("with where clause", func(t *testing.T) {
 		q := From("posts")
 		q = q.Where("id = $1", q.Param(299)).
 			OrderBy("created_at", "ASC")
