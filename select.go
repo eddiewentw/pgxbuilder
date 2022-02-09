@@ -20,6 +20,14 @@ func (q *Query) Select(columns ...string) *Query {
 	return q
 }
 
+// Distinct excludes all duplicate rows from the result set. One row will be
+// kept from each group of duplicates.
+func (q *Query) Distinct() *Query {
+	q.distinct = true
+
+	return q
+}
+
 // Limit specifies the maximum number of rows to return.
 func (q *Query) Limit(count uint64) *Query {
 	q.limit = count
@@ -38,6 +46,10 @@ func (q Query) toSelect() string {
 	var b strings.Builder
 
 	b.WriteString("SELECT ")
+
+	if q.distinct {
+		b.WriteString("DISTINCT ")
+	}
 
 	if len(q.columns) == 0 {
 		b.WriteString("*")

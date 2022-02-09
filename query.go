@@ -11,6 +11,7 @@ type Query struct {
 	offset     uint64
 	orderBy    []string
 	groupBy    []string
+	distinct   bool
 
 	// columns has different purposes in different statements. It
 	// contains selected columns in select statement, set expressions

@@ -48,6 +48,14 @@ func TestQuery_Select(t *testing.T) {
 	})
 }
 
+func TestQuery_Distinct(t *testing.T) {
+	q := From("weather_reports").
+		Select("location", "time", "report").
+		Distinct()
+
+	assert.Equal(t, "SELECT DISTINCT location, time, report FROM weather_reports", q.String())
+}
+
 func TestQuery_Limit(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		q := From("posts").
