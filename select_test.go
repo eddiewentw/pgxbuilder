@@ -141,3 +141,52 @@ func TestQuery_Offset(t *testing.T) {
 		assert.Equal(t, "SELECT * FROM posts LIMIT 30 OFFSET 10", q.String())
 	})
 }
+
+func TestQuery_For(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		q := From("posts").
+			For("NO KEY UPDATE")
+
+		assert.Equal(t, "SELECT * FROM posts FOR NO KEY UPDATE", q.String())
+	})
+
+	t.Run("with where clause", func(t *testing.T) {
+		q := From("posts")
+		q = q.Where("member_id = $1", q.Param(55)).
+			For("KEY SHARE")
+
+		assert.Equal(t, "SELECT * FROM posts WHERE (member_id = $1) FOR KEY SHARE", q.String())
+	})
+
+	t.Run("with group by clause", func(t *testing.T) {
+		q := From("posts").
+			GroupBy("member_id").
+			For("NO KEY UPDATE")
+
+		assert.Equal(t, "SELECT * FROM posts GROUP BY member_id FOR NO KEY UPDATE", q.String())
+	})
+
+	t.Run("with order by clause", func(t *testing.T) {
+		q := From("posts").
+			OrderBy("created_at").
+			For("SHARE")
+
+		assert.Equal(t, "SELECT * FROM posts ORDER BY created_at FOR SHARE", q.String())
+	})
+
+	t.Run("with limit clause", func(t *testing.T) {
+		q := From("posts").
+			Limit(30).
+			For("UPDATE")
+
+		assert.Equal(t, "SELECT * FROM posts LIMIT 30 FOR UPDATE", q.String())
+	})
+
+	t.Run("with offset clause", func(t *testing.T) {
+		q := From("posts").
+			Offset(10).
+			For("KEY SHARE")
+
+		assert.Equal(t, "SELECT * FROM posts OFFSET 10 FOR KEY SHARE", q.String())
+	})
+}
