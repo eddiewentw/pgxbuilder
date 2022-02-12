@@ -1,7 +1,5 @@
 package pgxbuilder
 
-import "strings"
-
 type Query struct {
 	// stmt indicates which kind of statement this query is.
 	stmt statement
@@ -74,27 +72,4 @@ func (q *Query) Returning(columns ...string) *Query {
 	q.returning = append(q.returning, columns...)
 
 	return q
-}
-
-type clauseDistinct struct {
-	enabled bool
-	columns []string
-}
-
-func (c clauseDistinct) String() string {
-	if !c.enabled {
-		return ""
-	}
-
-	if len(c.columns) == 0 {
-		return "DISTINCT "
-	}
-
-	var b strings.Builder
-
-	b.WriteString("DISTINCT ON (")
-	b.WriteString(strings.Join(c.columns, ", "))
-	b.WriteString(") ")
-
-	return b.String()
 }
