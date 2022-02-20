@@ -14,6 +14,7 @@ type Query struct {
 	orderBy    []string
 	groupBy    []string
 	distinct   clauseDistinct
+	lock       string
 
 	// columns has different purposes in different statements. It
 	// contains selected columns in select statement, set expressions
