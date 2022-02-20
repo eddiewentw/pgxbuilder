@@ -34,6 +34,13 @@ func (q *Query) Offset(start uint64) *Query {
 	return q
 }
 
+// For locks rows as they are obtained from the table.
+func (q *Query) For(lock string) *Query {
+	q.lock = lock
+
+	return q
+}
+
 func (q Query) toSelect() string {
 	var b strings.Builder
 
@@ -66,6 +73,10 @@ func (q Query) toSelect() string {
 	if q.offset > 0 {
 		b.WriteString(" OFFSET ")
 		b.WriteString(strconv.FormatUint(q.offset, 10))
+	}
+	if q.lock != "" {
+		b.WriteString(" FOR ")
+		b.WriteString(q.lock)
 	}
 
 	return b.String()
